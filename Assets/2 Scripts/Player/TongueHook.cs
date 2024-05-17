@@ -19,8 +19,8 @@ public class TongueHook : MonoBehaviour
     PlayerMovementController _movementControllerScr;
     WaterMeter _waterMeterScr;
 
-    bool _isCasting = false;
-    bool _awaitingJump = false;
+    [HideInInspector] public bool IsCasting = false;
+    [HideInInspector] public bool AwaitingJump = false;
 
     float _gScale;
     float _initialTongueLength;
@@ -36,7 +36,6 @@ public class TongueHook : MonoBehaviour
     private void Start()
     {
         //_tongue.SetActive(false);
-        _gScale = _rb.gravityScale;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -49,7 +48,7 @@ public class TongueHook : MonoBehaviour
 
     public void OnHook()
     {
-        if (_isCasting) return;
+        if (IsCasting) return;
 
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         if (mousePos.x - transform.position.x < 0)
@@ -69,36 +68,38 @@ public class TongueHook : MonoBehaviour
 
     public void OnJump()
     {
-        if (_awaitingJump)
+        if (AwaitingJump)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 direction = mousePos - (Vector2)transform.position;
             direction.Normalize();
 
-            _rb.AddForce(Vector2.up * _wallJumpForce, ForceMode2D.Impulse);
+            _rb.AddForce(Vector2.up * _movementControllerScr.JumpForce, ForceMode2D.Impulse);
 
             _rb.gravityScale = _gScale;
             _movementControllerScr.enabled = true;
             transform.up = Vector2.up;
-            _awaitingJump = false;
+            transform.right = _movementControllerScr.CurrentDirection;
+            AwaitingJump = false;
         }
     }
 
     public void OnCrouch()
     {
-        if (_awaitingJump)
+        if (AwaitingJump)
         {
             _rb.gravityScale = _gScale;
             _movementControllerScr.enabled = true;
             transform.up = Vector2.up;
-            _awaitingJump = false;
+            AwaitingJump = false;
         }
     }
 
     private IEnumerator TongueLash()
     {
         _tongue.SetActive(true);
-        _isCasting = true;
+        IsCasting = true;
+        _gScale = _rb.gravityScale;
         _rb.gravityScale = 0;
         _rb.velocity = Vector2.zero;
         _movementControllerScr.enabled = false;
@@ -149,8 +150,8 @@ public class TongueHook : MonoBehaviour
         //_tongue.SetActive(false);
 
         yield return new WaitForSeconds(_tongueCd);
-        _isCasting = false;
-        _awaitingJump = false;
+        IsCasting = false;
+        AwaitingJump = false;
     }
 
     private IEnumerator PullPlayer(Vector2 contact)
@@ -187,18 +188,18 @@ public class TongueHook : MonoBehaviour
         //_tongue.SetActive(false);
 
         transform.up = rayCastHit.normal;
-        _isCasting = false;
+        IsCasting = false;
 
         if(rayCastHit.normal == Vector2.up)
         {
             _rb.gravityScale = _gScale;
             _movementControllerScr.enabled = true;
-            _awaitingJump = false;
+            AwaitingJump = false;
             //transform.right = Vector2.right;
         }
         else
         {
-            _awaitingJump = true;
+            AwaitingJump = true;
         }
 
         _collider.size = initialSize;

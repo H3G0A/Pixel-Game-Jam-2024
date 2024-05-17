@@ -6,11 +6,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovementController : MonoBehaviour
 {
-    [SerializeField] float _maxSpeed;
-    [SerializeField] float _jumpForce;
+    public float MaxSpeed;
+    public float JumpForce;
     [SerializeField] CapsuleCollider2D _capsuleCollider;
     [SerializeField] LayerMask _groundedMask;
 
+    [HideInInspector] public Vector2 CurrentDirection;
     float _currentSpeed = 0;
     float _direction;
 
@@ -30,24 +31,26 @@ public class PlayerMovementController : MonoBehaviour
 
     private void ManageMovement()
     {
-        _rb.velocity = new Vector2(_direction * _maxSpeed, _rb.velocity.y);
+        _rb.velocity = new Vector2(_direction * MaxSpeed, _rb.velocity.y);
     }
 
     public void OnRun(InputValue value)
     {
         _direction = value.Get<float>();
 
+        if (_direction > 0) CurrentDirection = Vector2.right;
+        else if (_direction < 0) CurrentDirection = Vector2.left;
+
         if (!this.enabled) return;
-        if (_direction > 0) transform.right = Vector2.right;
-        else if (_direction < 0) transform.right = Vector2.left;
+        transform.right = CurrentDirection;
     }
 
     public void OnJump()
     {
-        if(IsGrounded() && this.enabled) _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
+        if(IsGrounded() && this.enabled) _rb.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
     }
 
-    private Boolean IsGrounded()
+    public bool IsGrounded()
     {
         Vector2 origin = new(_capsuleCollider.bounds.center.x, _capsuleCollider.bounds.center.y - _capsuleCollider.size.x + .4f);
         RaycastHit2D rayCastHit = Physics2D.CircleCast(origin, _capsuleCollider.size.x * .5f, Vector2.down, .1f, _groundedMask);
