@@ -31,7 +31,7 @@ public class TongueHook : MonoBehaviour
 
     private void Start()
     {
-        _tongue.SetActive(false);
+        //_tongue.SetActive(false);
         _gScale = _rb.gravityScale;
     }
 
@@ -142,7 +142,7 @@ public class TongueHook : MonoBehaviour
         _rb.gravityScale = _gScale;
         _movementControllerScr.enabled = true;
         _tongue.transform.right = Vector2.right;
-        _tongue.SetActive(false);
+        //_tongue.SetActive(false);
 
         yield return new WaitForSeconds(_tongueCd);
         _isCasting = false;
@@ -178,7 +178,7 @@ public class TongueHook : MonoBehaviour
         transform.position = fixedPos;
 
         _tongue.transform.localScale = new(_initialTongueLength, _tongue.transform.localScale.y, _tongue.transform.localScale.z);
-        _tongue.SetActive(false);
+        //_tongue.SetActive(false);
 
         transform.up = rayCastHit.normal;
         _isCasting = false;

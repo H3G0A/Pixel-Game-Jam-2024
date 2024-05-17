@@ -22,11 +22,6 @@ public class PlayerMovementController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Start()
-    {
-        //_movement = new(transform.position.x, transform.position.y);
-    }
-
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -41,6 +36,10 @@ public class PlayerMovementController : MonoBehaviour
     public void OnRun(InputValue value)
     {
         _direction = value.Get<float>();
+
+        if (!this.enabled) return;
+        if (_direction > 0) transform.right = Vector2.right;
+        else if (_direction < 0) transform.right = Vector2.left;
     }
 
     public void OnJump()
