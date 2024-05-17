@@ -9,12 +9,15 @@ public class TongueHook : MonoBehaviour
     [SerializeField] float _pullSpeed;
     [SerializeField] float _tongueCd;
     [SerializeField] float _wallJumpForce;
+    [SerializeField] float _waterCost;
     [SerializeField] LayerMask _collisionMask;
     [SerializeField] GameObject _tongue;
 
     Rigidbody2D _rb;
     CapsuleCollider2D _collider;
+    
     PlayerMovementController _movementControllerScr;
+    WaterMeter _waterMeterScr;
 
     bool _isCasting = false;
     bool _awaitingJump = false;
@@ -27,6 +30,7 @@ public class TongueHook : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _collider = GetComponent<CapsuleCollider2D>();
         _movementControllerScr = GetComponent<PlayerMovementController>();
+        _waterMeterScr = GetComponent<WaterMeter>();
     }
 
     private void Start()
@@ -151,6 +155,8 @@ public class TongueHook : MonoBehaviour
 
     private IEnumerator PullPlayer(Vector2 contact)
     {
+        _waterMeterScr.DrainWater(_waterCost);
+
         Vector2 initialSize = _collider.size;
         _collider.size = new(.5f, .5f);
 

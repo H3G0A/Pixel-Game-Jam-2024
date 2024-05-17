@@ -3275,6 +3275,7 @@ GameObject:
   - component: {fileID: 766861372}
   - component: {fileID: 766861371}
   - component: {fileID: 766861374}
+  - component: {fileID: 766861375}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -3426,10 +3427,27 @@ MonoBehaviour:
   _pullSpeed: 0.22
   _tongueCd: 0.3
   _wallJumpForce: 19
+  _waterCost: 5
   _collisionMask:
     serializedVersion: 2
     m_Bits: 8
   _tongue: {fileID: 1489175963}
+--- !u!114 &766861375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766861364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55ac03efd54bd81458d78e07bf313b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxWater: 100
+  _drainingRate: 1
+  _meterUI: {fileID: 969448851}
+  _currentWater: 0
 --- !u!1 &798656363
 GameObject:
   m_ObjectHideFlags: 0
