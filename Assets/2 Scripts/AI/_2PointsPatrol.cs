@@ -12,6 +12,7 @@ public class _2PointsPatrol : MonoBehaviour
     [SerializeField] float _alertedSpeed;
     [SerializeField] float _restTime;
 
+    bool _isTurning = false;
     Rigidbody2D _rb;
 
     private void OnEnable()
@@ -50,32 +51,38 @@ public class _2PointsPatrol : MonoBehaviour
 
     private void ManageMovement()
     {
-        if(transform.position.x <= _leftLimit.position.x)
+        if (_isTurning) return;
+
+        if(transform.position.x <= _leftLimit.position.x && (Vector2)transform.right == Vector2.left)
         {
+            Debug.Log("Turn right");
             StartCoroutine(TurnAround(Vector2.right));
         } 
-        else if(transform.position.x >= _rightLimit.position.x)
+        else if(transform.position.x >= _rightLimit.position.x && (Vector2)transform.right == Vector2.right)
         {
+            Debug.Log("Turn left");
             StartCoroutine(TurnAround(Vector2.left));
         }
     }
 
     public void RaiseAlarm()
     {
-        _rb.velocity = transform.right * _alertedSpeed;
+        if(!_isTurning) _rb.velocity = transform.right * _alertedSpeed;
         _speed = _alertedSpeed;
     }
 
     private IEnumerator TurnAround(Vector2 direction)
     {
         _rb.velocity = Vector2.zero;
+        _isTurning = true;
 
         yield return new WaitForSeconds(_restTime);
 
         transform.right = direction;
 
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.3f);
 
         _rb.velocity = transform.right * _speed;
+        _isTurning = false;
     }
 }

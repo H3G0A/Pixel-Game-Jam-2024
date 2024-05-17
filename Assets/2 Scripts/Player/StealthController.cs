@@ -47,7 +47,6 @@ public class StealthController : MonoBehaviour
 
     public void SoundAlarm()
     {
-        Debug.Log("Alarm sounded");
         OnAlarmSound?.Invoke();
     }
 
