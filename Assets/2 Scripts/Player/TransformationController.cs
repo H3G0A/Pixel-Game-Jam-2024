@@ -80,7 +80,7 @@ public class TransformationController : MonoBehaviour
         _rb.gravityScale = _normalGravity;
         _collider.enabled = true;
 
-        _playerSprite.color = new Color32(209, 204, 70, 255);
+        _playerSprite.color = new Color32(255, 255, 255, 255);
     }
 
     public void TurnToWater()
@@ -103,7 +103,7 @@ public class TransformationController : MonoBehaviour
         _rb.gravityScale = _vaporGravity;
         _collider.enabled = false;
 
-        _playerSprite.color = new Color32(144, 243, 233, 255);
+        _playerSprite.color = new Color32(144, 243, 233, 155);
     }
 
     public void OnTransform()

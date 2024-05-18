@@ -82,19 +82,16 @@ public class PlayerMovementController : MonoBehaviour
         }
         else if (value.isPressed)
         {
-            Debug.Log("0");
             _collider.size = new(.95f, .45f);
             _trigger.size = new(.95f, .45f);
             _isCrouched = true;
         }
         else if (_isCrouched && CanStand())
         {
-            Debug.Log("1");
             StandUp();
         }
         else if (_isCrouched)
         {
-            Debug.Log("2");
             _wantsToStand = true;
         }
     }
@@ -114,7 +111,8 @@ public class PlayerMovementController : MonoBehaviour
 
     public bool IsGrounded()
     {
-        Vector2 origin = new(_collider.bounds.center.x, _collider.bounds.center.y - _collider.size.x + .4f);
+        Vector2 origin = new(_collider.bounds.center.x, _collider.bounds.min.y);
+        Debug.Log("sdf");
         RaycastHit2D rayCastHit = Physics2D.CircleCast(origin, _collider.size.x * .5f, Vector2.down, .1f, _groundedMask);
         //RaycastHit2D rayCastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, groundCheckDirection, extraHeight, groundLayer);
 
@@ -137,7 +135,7 @@ public class PlayerMovementController : MonoBehaviour
         Color red = new Color(1, 0, 0, .3f);
         Color green = new Color(0, 1, 0, .3f);
 
-        Vector2 origin = new(_collider.bounds.center.x, _collider.bounds.center.y - _collider.size.x + .3f);
+        Vector2 origin = new(_collider.bounds.center.x, _collider.bounds.min.y);
 
         if (IsGrounded()) Gizmos.color = green;
         else              Gizmos.color = red;

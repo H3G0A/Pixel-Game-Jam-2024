@@ -83,6 +83,7 @@ public class TongueHook : MonoBehaviour
             _rb.gravityScale = _gScale;
             _movementControllerScr.enabled = true;
             transform.up = Vector2.up;
+            transform.right = _movementControllerScr.CurrentDirection;
             AwaitingJump = false;
         }
     }
