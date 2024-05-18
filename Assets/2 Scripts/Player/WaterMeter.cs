@@ -7,11 +7,15 @@ using UnityEngine.UI;
 public class WaterMeter : MonoBehaviour
 {
     [SerializeField] int _maxWater;
+    [Space(10)]
     [SerializeField] float _normalDrainingRate;
     [SerializeField] float _hotZoneDrainingRate;
+    [SerializeField] float _heatTrapDrainingRate;
+    [Space(10)]
+    [SerializeField] float _currentDrainingRate;
+    [Space(10)]
     [SerializeField] Image _meterUI;
 
-    float _currentDrainingRate;
     float _currentWater;
 
     StealthController _stealthControllerScr;
@@ -36,12 +40,14 @@ public class WaterMeter : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("HotZone")) _currentDrainingRate = _hotZoneDrainingRate;
+        if (collision.CompareTag("HeatTrap")) _currentDrainingRate += _heatTrapDrainingRate;
+        if (collision.CompareTag("HotZone")) _currentDrainingRate += _hotZoneDrainingRate;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("HotZone")) _currentDrainingRate = _normalDrainingRate;
+        if (collision.CompareTag("HeatTrap")) _currentDrainingRate -= _heatTrapDrainingRate;
+        if (collision.CompareTag("HotZone")) _currentDrainingRate -= _hotZoneDrainingRate;
     }
 
     private void ManagerWater()

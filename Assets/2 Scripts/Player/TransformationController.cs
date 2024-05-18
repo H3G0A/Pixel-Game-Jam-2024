@@ -57,6 +57,20 @@ public class TransformationController : MonoBehaviour
         TurnNormal();
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("HotZone")) _enableVapor = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("HotZone"))
+        {
+            _enableVapor = false;
+            TurnNormal();
+        }
+    }
+
     public void TurnNormal()
     {
         CurrentForm = PlayerForm.NORMAL;

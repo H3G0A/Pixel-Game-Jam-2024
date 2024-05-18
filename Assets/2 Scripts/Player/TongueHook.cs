@@ -151,7 +151,7 @@ public class TongueHook : MonoBehaviour
         _waterMeterScr.DrainWater(_waterCost);
 
         Vector2 initialSize = _collider.size;
-        _collider.size = new(.5f, .5f);
+        _collider.size = new(.7f, .7f);
 
         Vector2 direction = contact - (Vector2)transform.position;
         direction.Normalize();
