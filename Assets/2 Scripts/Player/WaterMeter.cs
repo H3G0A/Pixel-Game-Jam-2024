@@ -14,7 +14,14 @@ public class WaterMeter : MonoBehaviour
     float _currentDrainingRate;
     float _currentWater;
 
-    // Start is called before the first frame update
+    StealthController _stealthControllerScr;
+
+
+    private void Awake()
+    {
+        _stealthControllerScr = GetComponent<StealthController>();
+    }
+
     void Start()
     {
         _currentWater = _maxWater;
@@ -39,7 +46,7 @@ public class WaterMeter : MonoBehaviour
 
     private void ManagerWater()
     {
-        if (_currentWater == 0) return;
+        if (_currentWater == 0 || _stealthControllerScr.HiddenInWater) return;
 
         DrainWater(Time.deltaTime * _currentDrainingRate);
     }

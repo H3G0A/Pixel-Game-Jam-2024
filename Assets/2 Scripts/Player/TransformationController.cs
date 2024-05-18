@@ -22,13 +22,17 @@ public class TransformationController : MonoBehaviour
     [SerializeField] float _vaporSpeed;
     [SerializeField] float _vaporGravity;
 
-    PlayerForm _currentForm = PlayerForm.NORMAL;
+    [HideInInspector] public  PlayerForm CurrentForm = PlayerForm.NORMAL;
+    bool _isTransforming = false;
+
     Rigidbody2D _rb;
+    SpriteRenderer _playerSprite;
+    Collider2D _collider;
+    
     PlayerMovementController _movementControllerScr;
     WaterMeter _waterMeterScr;
     TongueHook _tongueHookScr;
-
-    SpriteRenderer _playerSprite;
+    StealthController _stealthControllerScr;
 
     public enum PlayerForm
     {
@@ -39,11 +43,13 @@ public class TransformationController : MonoBehaviour
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _playerSprite = GetComponentInChildren<SpriteRenderer>();
+        _collider = GetComponent<Collider2D>();
+
         _movementControllerScr = GetComponent<PlayerMovementController>();
         _tongueHookScr = GetComponent<TongueHook>();
         _waterMeterScr = GetComponent<WaterMeter>();
-
-        _playerSprite = GetComponentInChildren<SpriteRenderer>();
+        _stealthControllerScr = GetComponent<StealthController>();
     }
 
     private void Start()
@@ -53,41 +59,44 @@ public class TransformationController : MonoBehaviour
 
     public void TurnNormal()
     {
-        _currentForm = PlayerForm.NORMAL;
+        CurrentForm = PlayerForm.NORMAL;
 
         _movementControllerScr.JumpForce = _normalJumpForce;
         _movementControllerScr.MaxSpeed = _normalSpeed;
         _rb.gravityScale = _normalGravity;
+        _collider.enabled = true;
 
         _playerSprite.color = new Color32(209, 204, 70, 255);
     }
 
     public void TurnToWater()
     {
-        _currentForm = PlayerForm.WATER;
+        CurrentForm = PlayerForm.WATER;
 
         _movementControllerScr.JumpForce = _waterJumpForce;
         _movementControllerScr.MaxSpeed = _waterSpeed;
+        _collider.enabled = true;
 
         _playerSprite.color = new Color32(100, 101, 231, 255);
     }
 
     public void TurnToVapor()
     {
-        _currentForm = PlayerForm.VAPOR;
+        CurrentForm = PlayerForm.VAPOR;
 
         _movementControllerScr.JumpForce = _vaporJumpForce;
         _movementControllerScr.MaxSpeed = _vaporSpeed;
         _rb.gravityScale = _vaporGravity;
+        _collider.enabled = false;
 
         _playerSprite.color = new Color32(144, 243, 233, 255);
     }
 
     public void OnTransform()
     {
-        if (!this.enabled || !_movementControllerScr.IsGrounded() || _tongueHookScr.IsCasting || _tongueHookScr.AwaitingJump) return;
+        if (!this.enabled || !_movementControllerScr.IsGrounded() || _tongueHookScr.IsCasting || _tongueHookScr.AwaitingJump || _isTransforming) return;
 
-        if (_currentForm != PlayerForm.NORMAL)
+        if (CurrentForm != PlayerForm.NORMAL)
         {
             TurnNormal();
             return; //Avoid water cost when turning back to normal
@@ -108,12 +117,14 @@ public class TransformationController : MonoBehaviour
 
     private IEnumerator WaitForDelay()
     {
+        _isTransforming = true;
         _movementControllerScr.enabled = false;
         _tongueHookScr.enabled = false;
         _rb.velocity = Vector2.zero;
 
         yield return new WaitForSeconds(_transformationDelay);
 
+        _isTransforming = false;
         _movementControllerScr.enabled = true;
         _tongueHookScr.enabled = true;
         transform.right = _movementControllerScr.CurrentDirection;

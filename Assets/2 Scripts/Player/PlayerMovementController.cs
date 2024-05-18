@@ -12,21 +12,37 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] LayerMask _groundedMask;
 
     [HideInInspector] public Vector2 CurrentDirection;
-    float _currentSpeed = 0;
     float _direction;
+    bool _onPuddle = false;
 
     Rigidbody2D _rb;
+    TransformationController _transformControllerScr;
+    TongueHook _tongueHookScr;
+    StealthController _stealthControllerScr;
 
 
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _transformControllerScr = GetComponent<TransformationController>();
+        _tongueHookScr = GetComponent<TongueHook>();
+        _stealthControllerScr = GetComponent<StealthController>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         ManageMovement();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Puddle")) _onPuddle = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Puddle")) _onPuddle = false;
     }
 
     private void ManageMovement()
@@ -47,7 +63,19 @@ public class PlayerMovementController : MonoBehaviour
 
     public void OnJump()
     {
-        if(IsGrounded() && this.enabled) _rb.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
+        if (IsGrounded() && this.enabled)
+        {
+            _rb.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
+        }
+    }
+
+    public void OnCrouch()
+    {
+        if (!this.enabled || _transformControllerScr.CurrentForm != TransformationController.PlayerForm.WATER || !IsGrounded() || _tongueHookScr.IsCasting || _tongueHookScr.AwaitingJump) return;
+        if (_onPuddle)
+        {
+            _stealthControllerScr.HideInWater();
+        }
     }
 
     public bool IsGrounded()

@@ -10,6 +10,7 @@ public class StaticPatrol : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+
             collision.GetComponent<StealthController>().GotCaught();
         }
     }

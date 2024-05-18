@@ -14,7 +14,7 @@ public class TongueHook : MonoBehaviour
     [SerializeField] GameObject _tongue;
 
     Rigidbody2D _rb;
-    CapsuleCollider2D _collider;
+    [SerializeField] CapsuleCollider2D _collider;
     
     PlayerMovementController _movementControllerScr;
     WaterMeter _waterMeterScr;
@@ -28,7 +28,7 @@ public class TongueHook : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
-        _collider = GetComponent<CapsuleCollider2D>();
+        _collider = GetComponentsInChildren<CapsuleCollider2D>()[1];
         _movementControllerScr = GetComponent<PlayerMovementController>();
         _waterMeterScr = GetComponent<WaterMeter>();
     }
@@ -38,17 +38,9 @@ public class TongueHook : MonoBehaviour
         //_tongue.SetActive(false);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if((_collisionMask & (1 << collision.gameObject.layer)) != 0)
-        {
-
-        }
-    }
-
     public void OnHook()
     {
-        if (IsCasting) return;
+        if (IsCasting || this.enabled == false) return;
 
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         if (mousePos.x - transform.position.x < 0)

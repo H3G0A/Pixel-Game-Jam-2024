@@ -44,6 +44,7 @@ public class _2PointsPatrol : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+
             _rb.velocity = Vector2.zero;
             collision.GetComponent<StealthController>().GotCaught();
         }
@@ -53,14 +54,12 @@ public class _2PointsPatrol : MonoBehaviour
     {
         if (_isTurning) return;
 
-        if(transform.position.x <= _leftLimit.position.x && (Vector2)transform.right == Vector2.left)
+        if (transform.position.x <= _leftLimit.position.x && (Vector2)transform.right == Vector2.left)
         {
-            Debug.Log("Turn right");
             StartCoroutine(TurnAround(Vector2.right));
-        } 
-        else if(transform.position.x >= _rightLimit.position.x && (Vector2)transform.right == Vector2.right)
+        }
+        else if (transform.position.x >= _rightLimit.position.x && (Vector2)transform.right == Vector2.right)
         {
-            Debug.Log("Turn left");
             StartCoroutine(TurnAround(Vector2.left));
         }
     }

@@ -9,7 +9,7 @@ public class AlarmPatrol : MonoBehaviour
     [SerializeField] float _timeAsleep;
     [SerializeField] Collider2D _alarmCollider;
 
-    bool _isAwake = true;
+    bool _isAwake;
 
     // Start is called before the first frame update
 
@@ -24,21 +24,23 @@ public class AlarmPatrol : MonoBehaviour
     }
     void Start()
     {
+        _isAwake = false;
+        _alarmCollider.enabled = false;
         StartCoroutine(AwakeCycle());
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Collision with: " + collision.name);
         if (collision.CompareTag("Player"))
         {
-            Debug.Log("Player");
+
             collision.GetComponent<StealthController>().SoundAlarm();
         }
     }
 
     private void GoToSleep()
     {
+
         _isAwake = false;
         _alarmCollider.enabled = false;
     }
@@ -50,20 +52,21 @@ public class AlarmPatrol : MonoBehaviour
         GoToSleep();
     }
 
-    private IEnumerator WakeUp()
+    private IEnumerator WakeUp(float wakeUpTime)
     {
         _isAwake = true;
 
-        yield return new WaitForSeconds(1); // Leave time for the player to react before getting caught inside the alarm range;
+        yield return new WaitForSeconds(wakeUpTime); // Leave time for the player to react before getting caught inside the alarm range;
 
         _alarmCollider.enabled = true;
     }
 
     private IEnumerator AwakeCycle()
     {
-        StartCoroutine(WakeUp());
+        float wakeUpTime = 1;
+        StartCoroutine(WakeUp(wakeUpTime));
 
-        yield return new WaitForSeconds(_timeAwake + 1);
+        yield return new WaitForSeconds(wakeUpTime + _timeAwake);
 
         StartCoroutine(AsleepCycle());
     }
