@@ -200,7 +200,7 @@ Transform:
   m_GameObject: {fileID: 2906183313765910600}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.0400004, y: -1.9200001, z: -10}
+  m_LocalPosition: {x: -3.0400002, y: -1.9200001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -417,7 +417,7 @@ MonoBehaviour:
   _pullSpeed: 0.13
   _tongueCd: 0.4
   _wallJumpForce: 19
-  _waterCost: 5
+  _waterCost: 3.5
   _collisionMask:
     serializedVersion: 2
     m_Bits: 8
@@ -507,7 +507,7 @@ Transform:
   m_GameObject: {fileID: 5158548446430241741}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0.82, z: 0}
+  m_LocalPosition: {x: 0.258, y: 0.79, z: 0}
   m_LocalScale: {x: 0.1, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

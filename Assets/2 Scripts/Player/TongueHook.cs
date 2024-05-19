@@ -57,7 +57,7 @@ public class TongueHook : MonoBehaviour
             _lookDirection = Vector2.right;
         }
 
-        transform.right = _lookDirection;
+        if(!AwaitingJump) transform.right = _lookDirection;
 
 
         Vector2 direction = new(mousePos.x - _tongue.transform.position.x, mousePos.y - _tongue.transform.position.y);

@@ -17,12 +17,13 @@ public class WaterMeter : MonoBehaviour
     [SerializeField] Image _meterUI;
 
     float _currentWater;
-
+    Animator _animator;
     StealthController _stealthControllerScr;
 
 
     private void Awake()
     {
+        _animator = GetComponentInChildren<Animator>();
         _stealthControllerScr = GetComponent<StealthController>();
     }
 
@@ -35,7 +36,7 @@ public class WaterMeter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ManagerWater();
+        ManageWater();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -50,9 +51,16 @@ public class WaterMeter : MonoBehaviour
         if (collision.CompareTag("HotZone")) _currentDrainingRate -= _hotZoneDrainingRate;
     }
 
-    private void ManagerWater()
+    private void ManageWater()
     {
-        if (_currentWater == 0 || _stealthControllerScr.HiddenInWater) return;
+        if (_stealthControllerScr.HiddenInWater) return;
+
+        if(_currentWater <= 0)
+        {
+            _currentDrainingRate = 0;
+            _animator.SetTrigger("Death");
+            _stealthControllerScr.GotCaught();
+        }
 
         DrainWater(Time.deltaTime * _currentDrainingRate);
     }
