@@ -104,6 +104,7 @@ public class TongueHook : MonoBehaviour
         IsCasting = true;
         if(!AwaitingJump) _gScale = _rb.gravityScale;
         _rb.gravityScale = 0;
+        Vector2 storedVel = _rb.velocity;
         _rb.velocity = Vector2.zero;
         _animator.SetFloat("XSpeed", _rb.velocity.x);
         _animator.SetFloat("YSpeed", _rb.velocity.y);
@@ -154,6 +155,7 @@ public class TongueHook : MonoBehaviour
         {
             _movementControllerScr.enabled = true;
             _rb.gravityScale = _gScale;
+            _rb.velocity = storedVel;
         }
 
         yield return new WaitForSeconds(_tongueCd);
@@ -167,7 +169,7 @@ public class TongueHook : MonoBehaviour
         _animator.SetBool("IsSticked", false);
 
         Vector2 initialSize = _collider.size;
-        _collider.size = new(.7f, .7f);
+        _collider.size = new((_collider.size.x * .5f) - .05f, (_collider.size.y * .5f) - .05f);
 
         Vector2 direction = contact - (Vector2)transform.position;
         direction.Normalize();

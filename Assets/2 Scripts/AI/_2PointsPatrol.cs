@@ -14,6 +14,7 @@ public class _2PointsPatrol : MonoBehaviour
 
     bool _isTurning = false;
     Rigidbody2D _rb;
+    Animator _animator;
 
     private void OnEnable()
     {
@@ -28,6 +29,7 @@ public class _2PointsPatrol : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Start()
@@ -47,11 +49,14 @@ public class _2PointsPatrol : MonoBehaviour
 
             _rb.velocity = Vector2.zero;
             collision.GetComponent<StealthController>().GotCaught();
+            _animator.SetTrigger("Surprised");
         }
     }
 
     private void ManageMovement()
     {
+        _animator.SetFloat("Speed", Mathf.Abs(_rb.velocity.x));
+
         if (_isTurning) return;
 
         if (transform.position.x <= _leftLimit.position.x && (Vector2)transform.right == Vector2.left)

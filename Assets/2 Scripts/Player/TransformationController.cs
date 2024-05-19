@@ -21,6 +21,7 @@ public class TransformationController : MonoBehaviour
     [SerializeField] float _vaporJumpForce;
     [SerializeField] float _vaporSpeed;
     [SerializeField] float _vaporGravity;
+    [SerializeField] bool _isInvisible;
 
     [HideInInspector] public  PlayerForm CurrentForm = PlayerForm.NORMAL;
     bool _isTransforming = false;
@@ -69,7 +70,7 @@ public class TransformationController : MonoBehaviour
         if (collision.CompareTag("HotZone"))
         {
             _enableVapor = false;
-            TurnNormal();
+            //if(CurrentForm == PlayerForm.VAPOR) TurnNormal();
         }
     }
 
@@ -106,9 +107,9 @@ public class TransformationController : MonoBehaviour
         _movementControllerScr.JumpForce = _vaporJumpForce;
         _movementControllerScr.MaxSpeed = _vaporSpeed;
         _rb.gravityScale = _vaporGravity;
-        _collider.enabled = false;
+        _collider.enabled = !_isInvisible;
 
-        _playerSprite.color = new Color(_playerSprite.color.r, _playerSprite.color.g, _playerSprite.color.b, .6f);
+        //_playerSprite.color = new Color(_playerSprite.color.r, _playerSprite.color.g, _playerSprite.color.b, .6f);
     }
 
     public void OnTransform()

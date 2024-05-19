@@ -86,12 +86,13 @@ public class PlayerMovementController : MonoBehaviour
 
     public void OnCrouch(InputValue value)
     {
-        if (!this.enabled || _transformControllerScr.CurrentForm != TransformationController.PlayerForm.WATER || !IsGrounded() || _tongueHookScr.IsCasting || _tongueHookScr.AwaitingJump) return;
+        if (!this.enabled || _transformControllerScr.CurrentForm != TransformationController.PlayerForm.WATER || 
+            !IsGrounded() || _tongueHookScr.IsCasting || _tongueHookScr.AwaitingJump) return;
         if (_onPuddle && value.isPressed)
         {
             _stealthControllerScr.HideInWater();
         }
-        else if (value.isPressed)
+        else if (value.isPressed && !IsCrouched)
         {
             Vector2 colliderNewSize = new(_collider.size.x - .05f, (_collider.size.y * .5f) - .05f);
             Vector2 triggerNewSize = new(_trigger.size.x - .10f, (_trigger.size.y * .5f) - .10f);
@@ -102,13 +103,14 @@ public class PlayerMovementController : MonoBehaviour
             _trigger.size = triggerNewSize;
 
             IsCrouched = true;
-            _animator.SetTrigger("Crouch");
+            //_animator.SetTrigger("Crouch");
+            _animator.SetBool("IsCrouching", true);
         }
-        else if (IsCrouched && CanStand())
+        else if (IsCrouched && CanStand() && !value.isPressed)
         {
             StandUp();
         }
-        else if (IsCrouched)
+        else if (IsCrouched && !value.isPressed)
         {
             _wantsToStand = true;
         }
@@ -123,7 +125,8 @@ public class PlayerMovementController : MonoBehaviour
 
         IsCrouched = false;
         _wantsToStand = false;
-        _animator.SetTrigger("Stand");
+        //_animator.SetTrigger("Stand");
+        _animator.SetBool("IsCrouching", false);
     }
 
     private void ManageStandingUp()

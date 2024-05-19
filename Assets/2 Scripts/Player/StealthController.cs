@@ -66,6 +66,14 @@ public class StealthController : MonoBehaviour
         if (_isCaught) return;
         _isCaught = true;
 
+        _rb.isKinematic = true;
+        _collider.enabled = false;
+        _movementControllerScr.enabled = false;
+
+        _rb.velocity = Vector2.zero;
+        _animator.SetFloat("XSpeed", _rb.velocity.x);
+        _animator.SetFloat("YSpeed", _rb.velocity.y);
+
         StartCoroutine(Restart());
     }
 
@@ -84,7 +92,7 @@ public class StealthController : MonoBehaviour
 
     private IEnumerator Restart()
     {
-        yield return null;
+        yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
