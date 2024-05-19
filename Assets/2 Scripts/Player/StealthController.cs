@@ -14,6 +14,7 @@ public class StealthController : MonoBehaviour
     Rigidbody2D _rb;
     Collider2D _collider;
     SpriteRenderer _playerSprite;
+    Animator _animator;
 
     TongueHook _tongueHookScr;
     PlayerMovementController _movementControllerScr;
@@ -26,6 +27,7 @@ public class StealthController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
         _playerSprite = GetComponentInChildren<SpriteRenderer>();
+        _animator = GetComponentInChildren<Animator>();
 
         _tongueHookScr = GetComponent<TongueHook>();
         _movementControllerScr = GetComponent<PlayerMovementController>();
@@ -46,11 +48,12 @@ public class StealthController : MonoBehaviour
         _tongueHookScr.enabled = false;
 
         _rb.velocity = Vector2.zero;
+        _animator.SetFloat("XSpeed", _rb.velocity.x);
+        _animator.SetFloat("YSpeed", _rb.velocity.y);
         _rb.isKinematic = true;
         _collider.enabled = false;
         HiddenInWater = true;
-
-        _playerSprite.color = new Color32(100, 101, 231, 155);
+        _animator.SetTrigger("Hide");
     }
 
     public void ReemergeFromWater()
@@ -87,8 +90,9 @@ public class StealthController : MonoBehaviour
 
     private IEnumerator Reemerge()
     {
+        _animator.SetTrigger("Emerge");
 
-        yield return null;
+        yield return new WaitForSeconds(.5f);
 
         _movementControllerScr.enabled = true;
         _tongueHookScr.enabled = true;
@@ -98,7 +102,5 @@ public class StealthController : MonoBehaviour
         _collider.enabled = true;
         HiddenInWater = false;
         transform.right = _movementControllerScr.CurrentDirection;
-
-        _playerSprite.color = new Color32(100, 101, 231, 255);
     }
 }

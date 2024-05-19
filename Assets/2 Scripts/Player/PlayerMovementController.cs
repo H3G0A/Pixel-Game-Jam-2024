@@ -15,10 +15,13 @@ public class PlayerMovementController : MonoBehaviour
     [HideInInspector] public Vector2 CurrentDirection;
     float _direction;
     bool _onPuddle = false;
-    bool _isCrouched = false;
+    public bool IsCrouched = false;
     bool _wantsToStand = false;
+    Vector2 _colliderSize;
+    Vector2 _triggerSize;
 
     Rigidbody2D _rb;
+    Animator _animator;
     TransformationController _transformControllerScr;
     TongueHook _tongueHookScr;
     StealthController _stealthControllerScr;
@@ -27,9 +30,16 @@ public class PlayerMovementController : MonoBehaviour
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponentInChildren<Animator>();
         _transformControllerScr = GetComponent<TransformationController>();
         _tongueHookScr = GetComponent<TongueHook>();
         _stealthControllerScr = GetComponent<StealthController>();
+    }
+
+    private void Start()
+    {
+        _colliderSize = _collider.size;
+        _triggerSize = _trigger.size;
     }
 
     // Update is called once per frame
@@ -37,6 +47,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         ManageMovement();
         ManageStandingUp();
+        SetAnimations();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -82,15 +93,22 @@ public class PlayerMovementController : MonoBehaviour
         }
         else if (value.isPressed)
         {
-            _collider.size = new(.95f, .45f);
-            _trigger.size = new(.95f, .45f);
-            _isCrouched = true;
+            Vector2 colliderNewSize = new(_collider.size.x - .05f, (_collider.size.y * .5f) - .05f);
+            Vector2 triggerNewSize = new(_trigger.size.x - .10f, (_trigger.size.y * .5f) - .10f);
+
+            _collider.offset = new(_collider.offset.x, _collider.offset.y - (_colliderSize.y - colliderNewSize.y) * .5f);
+            _trigger.offset = new(_trigger.offset.x, _trigger.offset.y - (_triggerSize.y - triggerNewSize.y)*.5f);
+            _collider.size = colliderNewSize;
+            _trigger.size = triggerNewSize;
+
+            IsCrouched = true;
+            _animator.SetTrigger("Crouch");
         }
-        else if (_isCrouched && CanStand())
+        else if (IsCrouched && CanStand())
         {
             StandUp();
         }
-        else if (_isCrouched)
+        else if (IsCrouched)
         {
             _wantsToStand = true;
         }
@@ -98,10 +116,14 @@ public class PlayerMovementController : MonoBehaviour
 
     private void StandUp()
     {
-        _collider.size = new(1, 1);
-        _trigger.size = new(1, 2);
-        _isCrouched = false;
+        _collider.offset = Vector2.zero;
+        _trigger.offset = Vector2.zero;
+        _collider.size = _colliderSize;
+        _trigger.size = _triggerSize;
+
+        IsCrouched = false;
         _wantsToStand = false;
+        _animator.SetTrigger("Stand");
     }
 
     private void ManageStandingUp()
@@ -112,7 +134,6 @@ public class PlayerMovementController : MonoBehaviour
     public bool IsGrounded()
     {
         Vector2 origin = new(_collider.bounds.center.x, _collider.bounds.min.y);
-        Debug.Log("sdf");
         RaycastHit2D rayCastHit = Physics2D.CircleCast(origin, _collider.size.x * .5f, Vector2.down, .1f, _groundedMask);
         //RaycastHit2D rayCastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, groundCheckDirection, extraHeight, groundLayer);
 
@@ -128,6 +149,13 @@ public class PlayerMovementController : MonoBehaviour
         RaycastHit2D rayCastMin = Physics2D.Linecast(new(_collider.bounds.min.x, _collider.bounds.max.y), new(_collider.bounds.min.x, _collider.bounds.max.y + .55f), _groundedMask);
         bool result = (rayCastMax.collider == null && rayCastMin.collider == null);
         return result;
+    }
+
+    private void SetAnimations()
+    {
+        _animator.SetFloat("XSpeed", Mathf.Abs(_rb.velocity.x));
+        _animator.SetFloat("YSpeed", _rb.velocity.y);
+        _animator.SetBool("IsGrounded", IsGrounded());
     }
 
     private void OnDrawGizmosSelected()
